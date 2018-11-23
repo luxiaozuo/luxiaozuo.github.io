@@ -40,6 +40,11 @@ Vue.filter('shorttime', function (value) {
    // console.log(value);
    return moment(value).format('YYYY年MM月DD日')
 })
+// 定义全局过滤器
+Vue.filter('shorttimeplus', function (value) {
+  // console.log(value);
+  return moment(value).format('YYYY年MM月DD日 HH:mm:ss')
+})
 new Vue({
   render: h => h(App),
   router
