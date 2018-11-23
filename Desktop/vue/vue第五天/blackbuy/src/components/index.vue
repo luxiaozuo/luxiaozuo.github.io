@@ -112,44 +112,16 @@
                     <div class="left-705">
                         <div class="banner-img">
                             <div id="focus-box" class="focus-box">
-                                <ul class="slides">
-                                    <li
-                                        class=""
-                                        style="width: 100%;height:100%; float: left; margin-right: -100%; position: relative; opacity: 0; display: block; z-index: 1;"
-                                    >
-                                        <a href="/goods.html">
-                                            <img
-                                                style="width: 100%;height:100%;"
-                                                src="http://39.108.135.214:8899/imgs/SJ4EgwosX0wTqvyAvhtFGT1w.jpg"
-                                                draggable="false"
-                                            >
-                                        </a>
-                                    </li>
-                                    <li
-                                        style="width: 100%;height:100%; float: left; margin-right: -100%; position: relative; opacity: 1; display: block; z-index: 2;"
-                                        class="flex-active-slide"
-                                    >
-                                        <a href="/goods.html">
-                                            <img
-                                                style="width: 100%;height:100%;"
-                                                src="http://39.108.135.214:8899/upload/201504/20/thumb_201504200314272543.jpg"
-                                                draggable="false"
-                                            >
-                                        </a>
-                                    </li>
-                                </ul>
-                                <ol class="flex-control-nav flex-control-paging">
-                                    <li>
-                                        <a class="">1</a>
-                                    </li>
-                                    <li>
-                                        <a class="flex-active">2</a>
-                                    </li>
-                                </ol>
+                              <el-carousel height="341px">
+                                 <el-carousel-item v-for="item in sliderlist" :key="item.id">
+                                   <img :src="item.img_url" alt="">
+                                 </el-carousel-item>
+                               </el-carousel>
                             </div>
                         </div>
                     </div>
                     <!--/幻灯片-->
+                    <!-- 右边热卖 -->
                     <div class="left-220">
                         <ul class="side-img-list">
                             <li v-for="(item, index) in toplist" :key="item.id">
@@ -170,11 +142,11 @@
                 </div>
             </div>
         </div>
-        <div class="section" v-for="(item, index) in message" :key="index">
+        <div class="section" v-for="item in message" :key="item.level1cateid">
           <div class="main-tit">
                 <h2>{{item.catetitle}}</h2>
                 <p>
-                    <a v-for="(item, index) in item.level2catelist" :key="index" href="/goods/43.html">{{item.subcatetitle}}</a>
+                    <a v-for="it in item.level2catelist" :key="it.subcateid" href="/goods/43.html">{{it.subcatetitle}}</a>
                     <a href="/goods/40.html">
                         更多
                         <i>+</i>
@@ -184,27 +156,29 @@
            <div class="wrapper clearfix">
                 <div class="wrap-box">
                     <ul class="img-list">
-                        <li v-for="(item, index) in item.datas" :key="index">
-                            <a :href="'#/site/goodsinfo/'+item.artID" class="">
+                        <li v-for="it in item.datas" :key="it.artID">
+                            <!-- <a :href="'#/site/goodsinfo/'+it.artID" class=""> -->
+                            <router-link :to="'/detail/'+ it.artID">
                                 <div class="img-box">
                                     <img
-                                        :src="item.img_url"
+                                        :src="it.img_url"
                                     >
                                 </div>
                                 <div class="info">
-                                    <h3>{{item.artTitle}}</h3>
+                                    <h3>{{it.artTitle}}</h3>
                                     <p class="price">
-                                        <b>{{item.sell_price}}</b>元
+                                        <b>{{it.sell_price}}</b>元
                                     </p>
                                     <p>
-                                        <strong>库存 {{item.stock_quantity}}</strong>
+                                        <strong>库存 {{it.stock_quantity}}</strong>
                                         <span>
                                             市场价：
-                                            <s>{{item.market_price}}</s>
+                                            <s>{{it.market_price}}</s>
                                         </span>
                                     </p>
                                 </div>
-                            </a>
+                            <!-- </a> -->
+                            </router-link>
                         </li>
                     
                         
@@ -218,8 +192,8 @@
 </template>
 
 <script>
-import axios from 'axios'
-import moment from 'moment'
+// import axios from 'axios'
+// import moment from 'moment'
 export default {
   name: "index",
   data:function(){
@@ -236,15 +210,15 @@ export default {
     
   },
   created() {
-      axios.get('http://111.230.232.110:8899/site/goods/gettopdata/goods')
+      this.$axios.get('http://111.230.232.110:8899/site/goods/gettopdata/goods')
       .then(result=>{
-          console.log(result);
+        //   console.log(result);
         this.catelist = result.data.message.catelist;
         this.sliderlist = result.data.message.sliderlist;
         this.toplist = result.data.message.toplist;
       })
 
-      axios.get('http://111.230.232.110:8899/site/goods/getgoodsgroup')
+      this.$axios.get('http://111.230.232.110:8899/site/goods/getgoodsgroup')
       .then(result=>{
         //   console.log(result);
         this.message = result.data.message
@@ -252,14 +226,18 @@ export default {
        
       })
   },
-  filters:{
-      shorttime(value){
-        // console.log(value);
-        return moment(value).format('YYYY年MM月DD日')
-      }
-  }
+//   filters:{
+//       shorttime(value){
+//         // console.log(value);
+//         return moment(value).format('YYYY年MM月DD日')
+//       }
+//   }
 };
 </script>
 
 <style>
+.banner-img img{
+    width: 100%;
+    height: 100%;
+}
 </style>
