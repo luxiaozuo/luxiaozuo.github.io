@@ -3,10 +3,17 @@ import App from './App.vue'
 import VueRouter from 'vue-router'
 // 导入moment
 import moment from 'moment'
+// 导入放大镜
+import ProductZoomer from 'vue-product-zoomer'
+
+Vue.use(ProductZoomer)
 
 // 导入axios
 import axios from 'axios'
-Vue.prototype.$axios = axios
+Vue.prototype.$axios = axios;
+
+// 使用axios绑定网站基地址
+axios.defaults.baseURL = 'http://111.230.232.110:8899/';
 // 导入首页组件
 import index from './components/index.vue'
 // 导入详情页面组件

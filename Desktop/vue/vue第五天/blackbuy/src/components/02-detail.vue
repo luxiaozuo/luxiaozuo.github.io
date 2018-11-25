@@ -14,7 +14,13 @@
                     <div class="left-925">
                         <!--  -->
                         <div class="goods-box clearfix">
-                            <div class="pic-box"></div>
+                            <!-- 放大镜 -->
+                            <div class="pic-box" v-if="images.normal_size.length!=0">
+                                <ProductZoomer
+                                    :base-images="images"
+                                    :base-zoomer-options="zoomerOptions"
+                                />
+                            </div>
                             <div class="goods-spec">
                                 <h1>{{goodsinfo.title}}</h1>
                                 <p class="subtitle">{{goodsinfo.sub_title}}</p>
@@ -116,7 +122,7 @@
                                         <div class="conn-box">
                                             <div class="editor">
                                                 <textarea
-                                                 @keyup.enter="sendComment"
+                                                    @keyup.enter="sendComment"
                                                     v-model="commentInfo"
                                                     id="txtContent"
                                                     name="txtContent"
@@ -134,7 +140,6 @@
                                                     value="提交评论"
                                                     class="submit"
                                                     @click="sendComment"
-                                                   
                                                 >
                                                 <span class="Validform_checktip"></span>
                                             </div>
@@ -161,6 +166,7 @@
                                     <div class="page-box" style="margin: 5px 0px 0px 62px;">
                                         <Page
                                             :total="totalcount"
+                                            :current="pageIndex"
                                             show-sizer
                                             placement="top"
                                             :page-size-opts="[6,8,12]"
@@ -219,7 +225,20 @@ export default {
       pageSize: 6,
       totalcount: 0,
       comments: [],
-      commentInfo: ""
+      commentInfo: "",
+      images: {
+        // required
+        normal_size: []
+      },
+      zoomerOptions: {
+        zoomFactor: 4,
+        pane: "container-round",
+        hoverDelay: 300,
+        namespace: "inline-zoomer",
+        move_by_click: true,
+        scroll_items: 5,
+        choosed_thumb_border_color: "#bbdefb"
+      }
     };
   },
   methods: {
@@ -233,10 +252,16 @@ export default {
           `http://111.230.232.110:8899/site/goods/getgoodsinfo/${this.artID}`
         )
         .then(result => {
-          // console.log(result);
+          console.log(result);
           this.goodsinfo = result.data.message.goodsinfo;
           this.hotgoodslist = result.data.message.hotgoodslist;
-          this.imglist = result.data.message.hotgoodslist;
+          this.imglist = result.data.message.imglist;
+          this.imglist.forEach(element => {
+            this.images.normal_size.push({
+              id: element.id,
+              url: element.thumb_path
+            });
+          });
         });
 
       this.getComments();
@@ -267,27 +292,25 @@ export default {
     },
     // 发表评论的函数
     sendComment() {
-        if(!this.commentInfo.trim()){
-            alert('请输入评论内容');
-            return;
-        }
+      if (!this.commentInfo.trim()) {
+        this.$Message.warning("请输入评论内容");
+        return;
+      }
       this.$axios
-        .post(
-          `http://111.230.232.110:8899/site/validate/comment/post/goods/${
-            this.artID
-          }`,
-          {
-            commenttxt: this.commentInfo
-          }
-        )
+        .post(`site/validate/comment/post/goods/${this.artID}`, {
+          commenttxt: this.commentInfo
+        })
         .then(result => {
           //   console.log(result);
-        //   alert(result.data.message);
-          this.commentInfo = ''
-          this.getComments()
-        })
-        .catch(error => {
-          alert(result.data.message);
+          //   alert(result.data.message);
+          if (result.data.status == 0) {
+            this.$Message.success("评论发表成功");
+            this.commentInfo = "";
+            this.pageIndex = 1;
+            this.getComments();
+          } else {
+            this.$Message.error("评论发表失败");
+          }
         });
     }
   },
@@ -297,6 +320,7 @@ export default {
   watch: {
     $route() {
       //   console.log('数据变了');
+      this.images.normal_size = [];
       this.initData();
     }
   }
@@ -304,7 +328,14 @@ export default {
 </script>
 <style>
 .tab-content img {
-  max-width: 900px;
+  max-width: 100%;
   display: block;
+}
+.pic-box {
+    width: 395px;
+}
+.thumb-list img{
+    width: 100px;
+    height: 100px;
 }
 </style>
