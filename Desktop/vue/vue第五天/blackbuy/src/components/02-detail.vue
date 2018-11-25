@@ -73,7 +73,7 @@
                                                     class="buy"
                                                 >立即购买</button>
                                                 <button
-                                                    onclick="cartAdd(this,'/',0,'/cart.html');"
+                                                    @click="add2cart"
                                                     class="add"
                                                 >加入购物车</button>
                                             </div>
@@ -252,7 +252,7 @@ export default {
           `http://111.230.232.110:8899/site/goods/getgoodsinfo/${this.artID}`
         )
         .then(result => {
-          console.log(result);
+        //   console.log(result);
           this.goodsinfo = result.data.message.goodsinfo;
           this.hotgoodslist = result.data.message.hotgoodslist;
           this.imglist = result.data.message.imglist;
@@ -312,6 +312,15 @@ export default {
             this.$Message.error("评论发表失败");
           }
         });
+    },
+    add2cart(){
+        // console.log(state);
+        this.$store.commit('add2cart',{
+            cartId:this.artID,
+            cartNum:this.buyCount
+        })
+
+        this.buyCount = 1
     }
   },
   created() {

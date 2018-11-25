@@ -23,12 +23,14 @@
                             <a>退出</a>
                             <strong>|</strong>
                         </span>
-                        <a href="" class="">
+                        <!-- <a href="" class=""> -->
+                            <router-link to="/cart">
                             <i class="iconfont icon-cart"></i>购物车(
                             <span id="shoppingCartCount">
-                                <span>4</span>
+                                <span>{{$store.getters.cartNum}}</span>
                             </span>)
-                        </a>
+                        <!-- </a> -->
+                        </router-link>
                     </div>
                 </div>
             </div>
