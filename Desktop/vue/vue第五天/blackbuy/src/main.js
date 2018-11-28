@@ -11,7 +11,7 @@ Vue.use(ProductZoomer);
 // 导入axios
 import axios from "axios";
 Vue.prototype.$axios = axios;
-
+axios.defaults.withCredentials=true;//让ajax携带cookie
 // 使用axios绑定网站基地址
 axios.defaults.baseURL = "http://111.230.232.110:8899/";
 // 导入首页组件
@@ -20,6 +20,10 @@ import index from "./components/index.vue";
 import detail from "./components/02-detail.vue";
 // 导入购物车页面
 import cart from "./components/03-cart.vue";
+// 导入订单详情页面
+import order from './components/04-order.vue'
+// 导入登录页面
+import login from './components/05-login.vue'
 Vue.use(VueRouter);
 import "./assets/site/css/style.css";
 Vue.use(ElementUI);
@@ -39,13 +43,36 @@ Vue.config.productionTip = false;
 let routes = [
   // 重定向
   { path: "/", redirect: "/index" },
-  { path: "/index", component: index },
+  { path: "/index", component: index},
   { path: "/detail/:artID", component: detail },
-  { path: "/cart", component: cart }
+  { path: "/cart", component: cart },
+  { path: "/order/:ids", component: order },
+  { path: "/login", component: login }
 ];
 const router = new VueRouter({
   routes
 });
+// 导航守卫
+router.beforeEach((to, from, next) => {
+  if(to.path.indexOf('/order')!= -1){
+    // 如果要去订单详情页 需要判断是否登录了
+    axios.get('site/account/islogin').then(result=>{
+      // console.log(result);
+      if(result.data.code == 'nologin'){
+        // 说明没有登录
+        // console.log('没有登录');
+        router.push('/login')
+      }else{
+        // console.log('登录了');
+        next()
+      }
+    })
+  }else{
+
+    next()
+  }
+  // window.scrollTop = 0;
+})
 // 定义全局过滤器
 Vue.filter("shorttime", function(value) {
   // console.log(value);
@@ -67,10 +94,8 @@ const store = new Vuex.Store({
     // count: 0
     // 购物车数据对象
     // 短路运算 || 如果没有数据 左边的值是 false 去获取 || 右边的值
-    cartData: JSON.parse(window.localStorage.getItem("hm24")) || {
-      90: 6,
-      84: 7
-    }
+    cartData: JSON.parse(window.localStorage.getItem("hm24")) || {},
+    islogin:false
     // cartData:data
   },
   getters: {
@@ -99,6 +124,13 @@ const store = new Vuex.Store({
         Vue.set(state.cartData, obj.cartId, obj.cartNum);
       }
       // console.log(state.cartData);
+    },
+    changeCount(state,obj){
+      state.cartData = obj
+    },
+    // 登录状态改变
+    changeLogin(state,isLogin){
+      state.islogin = isLogin
     }
   }
 });
@@ -110,5 +142,19 @@ window.onbeforeunload = function() {
 new Vue({
   render: h => h(App),
   router,
-  store
+  store,
+  components:{baseinput:'<p>今天天气还好呀</p>' },
+  created() {
+    axios.get('site/account/islogin').then(result=>{
+      // console.log(result);
+      if(result.data.code == 'nologin'){
+        // 说明没有登录
+        // console.log('没有登录');
+        router.push('/login')
+        // store.state.islogin = false;
+      }else{
+        store.state.islogin = true;
+      }
+    })
+  },
 }).$mount("#app");

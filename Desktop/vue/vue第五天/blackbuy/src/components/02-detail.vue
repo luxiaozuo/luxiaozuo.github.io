@@ -315,6 +315,11 @@ export default {
     },
     add2cart(){
         // console.log(state);
+         this.$notify({
+         
+          message: '加入购物车成功',
+          type: 'success'
+        });
         this.$store.commit('add2cart',{
             cartId:this.artID,
             cartNum:this.buyCount
