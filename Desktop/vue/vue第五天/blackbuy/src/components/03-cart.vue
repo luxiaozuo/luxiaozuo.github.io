@@ -196,7 +196,7 @@ export default {
       });
       //   console.log(result);
       this.goodsList = result.data.message;
-      console.log(this.goodsList);
+    //   console.log(this.goodsList);
     });
   },
   computed: {
@@ -229,7 +229,7 @@ export default {
             
         })
         ids = ids.slice(0,-1)
-           console.log(ids);
+        //    console.log(ids);
             return ids
     }
   },

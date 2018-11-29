@@ -24,6 +24,12 @@ import cart from "./components/03-cart.vue";
 import order from './components/04-order.vue'
 // 导入登录页面
 import login from './components/05-login.vue'
+// 导入付款页面 订单详情页面
+import payMoney from './components/06-payMoney.vue'
+// 导入支付成功页面
+import paySuccess from './components/07-paySuccess.vue'
+// 导入会员中心页面
+import vipCenter from './components/08-vipCenter.vue'
 Vue.use(VueRouter);
 import "./assets/site/css/style.css";
 Vue.use(ElementUI);
@@ -46,17 +52,21 @@ let routes = [
   { path: "/index", component: index},
   { path: "/detail/:artID", component: detail },
   { path: "/cart", component: cart },
-  { path: "/order/:ids", component: order },
-  { path: "/login", component: login }
+  { path: "/order/:ids", component: order,meta: { checkLogin: true } },
+  { path: "/login", component: login,meta: { checkLogin: true } },
+  { path: "/payMoney/:ids", component: payMoney,meta: { checkLogin: true } },
+  { path: "/paySuccess", component: paySuccess,meta: { checkLogin: true } },
+  { path: "/vipCenter", component: vipCenter,meta: { checkLogin: true } }
 ];
 const router = new VueRouter({
-  routes
+  routes,
+  mode: 'history'
 });
 // 导航守卫
 router.beforeEach((to, from, next) => {
-  if(to.path.indexOf('/order')!= -1){
-    // 如果要去订单详情页 需要判断是否登录了
-    axios.get('site/account/islogin').then(result=>{
+  if(to.matched.some(record => record.meta.checkLogin)){
+    // 如果要去meta属性中有checkLogin=true的值 需要判断是否登录了
+      axios.get('site/account/islogin').then(result=>{
       // console.log(result);
       if(result.data.code == 'nologin'){
         // 说明没有登录

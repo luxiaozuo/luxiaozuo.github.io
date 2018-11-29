@@ -70,8 +70,10 @@ export default {
           // console.log(result);
           if (result.data.status === 0) {
             this.$Message.success(result.data.message);
-            this.$router.push("/order");
+            // this.$router.push("/order");
             this.$store.commit("changeLogin", true);
+            // 从哪里来回哪里去
+            this.$router.go(-1)
           } else {
             this.$Message.error(result.data.message);
           }
