@@ -352,6 +352,10 @@ export default {
                 this.$Message.success("提交成功");
                 this.orderid = result.data.message.orderid;
                 this.$router.push("/payMoney/"+this.orderid);
+                // 删除提交的物品
+                this.orderGoodsList.forEach(e=>{
+                  this.$store.commit('deleteById',e.id)
+                })
               }
             });
         } else {

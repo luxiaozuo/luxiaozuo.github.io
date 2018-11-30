@@ -141,6 +141,10 @@ const store = new Vuex.Store({
     // 登录状态改变
     changeLogin(state,isLogin){
       state.islogin = isLogin
+    },
+    // 删除提交订单的物品
+    deleteById(state,id){
+      Vue.delete(state.cartData,id)
     }
   }
 });

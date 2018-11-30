@@ -230,6 +230,7 @@ export default {
         // required
         normal_size: []
       },
+    //   放大镜的设置
       zoomerOptions: {
         zoomFactor: 4,
         pane: "container-round",
@@ -316,7 +317,6 @@ export default {
     add2cart(){
         // console.log(state);
          this.$notify({
-         
           message: '加入购物车成功',
           type: 'success'
         });
